@@ -47,6 +47,8 @@ import com.songoda.kingdoms.utils.IntervalUtils;
 import com.songoda.kingdoms.utils.MessageBuilder;
 
 public class KingdomManager extends Manager {
+	
+	BukkitTask callEvent = null;
 
 	private final AsyncLoadingCache<String, Optional<OfflineKingdom>> cache = Caffeine.newBuilder()
 			.expireAfterAccess(50, TimeUnit.MINUTES)
@@ -77,7 +79,7 @@ public class KingdomManager extends Manager {
 								kingdom.setInvasionCooldown(0);
 							}
 							updateUpgrades(kingdom);
-							instance.getServer().getScheduler().runTask(instance, () -> Bukkit.getPluginManager().callEvent(new KingdomLoadEvent(kingdom)));
+							callEvent = instance.getServer().getScheduler().runTask(instance, () -> Bukkit.getPluginManager().callEvent(new KingdomLoadEvent(kingdom)));
 						}
 						return Optional.ofNullable(kingdom);
 					}
@@ -576,6 +578,8 @@ public class KingdomManager extends Manager {
 	public synchronized void onDisable() {
 		if (autoSaveThread != null)
 			autoSaveThread.cancel();
+		if (callEvent != null)
+			callEvent.cancel();		
 		saveAll();
 	}
 
