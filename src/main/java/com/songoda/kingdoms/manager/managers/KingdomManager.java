@@ -98,7 +98,7 @@ public class KingdomManager extends Manager {
 		this.playerManager = instance.getManager( PlayerManager.class);
 		this.landManager = instance.getManager(LandManager.class);
 		String table = configuration.getString("database.kingdom-table", "Kingdoms");
-		if (configuration.getBoolean("database.mysql.enabled", false))
+		if (configuration.getBoolean("database.mysql.enabled", false) && configuration.getString("database.type").equals("MYSQL"))
 			database = getMySQLDatabase(table, OfflineKingdom.class);
 		else
 			database = getFileDatabase(table, OfflineKingdom.class);
